@@ -115,7 +115,6 @@
       <h3>Your Referral Link</h3>
       <p id="referLink" style="word-wrap: break-word;"></p>
       <button class="copy-btn" onclick="copyReferLink()">Copy Link</button>
-      <button class="btn" onclick="simulateReferral()">Simulate Referral</button>
     </div>
 
     <div id="withdrawForm">
@@ -131,56 +130,74 @@
   </div>
 
   <script>
-    // Fixed settings
+    // Constants
     const ratePerMinute = 0.5;
     const ratePerReferral = 2;
     const minWithdraw = 50;
 
-    // Load data from localStorage if available
+    // Load saved data
     let balance = parseFloat(localStorage.getItem('balance')) || 0;
     let referrals = parseInt(localStorage.getItem('referrals')) || 0;
     let totalWithdraw = parseFloat(localStorage.getItem('totalWithdraw')) || 0;
-    let startTime = parseInt(localStorage.getItem('startTime')) || 0;
 
-    // Update UI with stored values
-    document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
-    document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
-    document.getElementById('referrals').innerText = referrals;
+    // Update UI
+    function updateUI() {
+      document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
+      document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
+      document.getElementById('referrals').innerText = referrals;
+    }
 
+    updateUI();
+
+    // Handle referral from URL
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref && !localStorage.getItem('referredBy')) {
+      localStorage.setItem('referredBy', ref);
+      balance += ratePerReferral;
+      localStorage.setItem('balance', balance);
+      referrals++;
+      localStorage.setItem('referrals', referrals);
+      updateUI();
+    }
+
+    // Generate or get referral code
     let referralCode = localStorage.getItem('referralCode');
     if (!referralCode) {
       referralCode = 'user' + Math.random().toString(36).substr(2, 9);
       localStorage.setItem('referralCode', referralCode);
     }
 
+    // Start Earn button
     document.getElementById('startEarnBtn').addEventListener('click', () => {
       window.open('https://bd71cyberteam.blogspot.com/?m=1', '_blank');
-      if (!startTime) startTime = Date.now();
-      localStorage.setItem('startTime', startTime);
-      earnInterval = setInterval(updateBalance, 60000);
+      setInterval(() => {
+        balance += ratePerMinute;
+        localStorage.setItem('balance', balance);
+        updateUI();
+      }, 60000);
     });
 
-    function updateBalance() {
-      balance += ratePerMinute;
-      localStorage.setItem('balance', balance);
-      document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
-    }
-
+    // Refer Earn button
     document.getElementById('referEarnBtn').addEventListener('click', () => {
-      const link = `https://yourwebsite.com/?ref=${referralCode}`;
+      const link = `https://adsnetwork2025.github.io/hk.job.free.earn/?ref=${referralCode}`;
       document.getElementById('referLink').innerText = link;
       document.getElementById('referLinkSection').style.display = 'block';
     });
 
-    function simulateReferral() {
-      referrals += 1;
-      balance += ratePerReferral;
-      localStorage.setItem('referrals', referrals);
-      localStorage.setItem('balance', balance);
-      document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
-      document.getElementById('referrals').innerText = referrals;
+    // Copy link
+    function copyReferLink() {
+      const referLink = document.getElementById('referLink').innerText;
+      const tempInput = document.createElement('input');
+      tempInput.value = referLink;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alert("রেফার লিংক কপি করা হয়েছে!");
     }
 
+    // Withdraw
     function showWithdrawForm() {
       document.getElementById('withdrawForm').style.display = 'block';
     }
@@ -205,46 +222,18 @@
         return;
       }
 
-      const message = `নতুন উইথড্র রিকোয়েস্ট:\nমেথড: ${method}\nনম্বর: ${number}\nপরিমাণ: ৳${amount}`;
+      alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে (ডেমো)।");
 
-      const botToken = "YOUR_BOT_TOKEN_HERE";
-      const chatId = "YOUR_CHAT_ID_HERE";
+      balance -= amount;
+      totalWithdraw += amount;
 
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
-        balance -= amount;
-        totalWithdraw += amount;
-        localStorage.setItem('balance', balance);
-        localStorage.setItem('totalWithdraw', totalWithdraw);
-        document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
-        document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
-        document.getElementById('withdrawForm').reset();
-        document.getElementById('withdrawForm').style.display = 'none';
-      })
-      .catch(err => {
-        console.error(err);
-        alert("ত্রুটি হয়েছে, আবার চেষ্টা করুন।");
-      });
-    }
+      localStorage.setItem('balance', balance);
+      localStorage.setItem('totalWithdraw', totalWithdraw);
+      updateUI();
 
-    function copyReferLink() {
-      const referLink = document.getElementById('referLink').innerText;
-      const tempInput = document.createElement('input');
-      tempInput.value = referLink;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-      alert("রেফার লিংক কপি করা হয়েছে!");
+      document.getElementById('number').value = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('withdrawForm').style.display = 'none';
     }
   </script>
 </body>
