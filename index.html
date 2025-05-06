@@ -59,7 +59,7 @@
       background-color: #45a049;
     }
 
-    #referLinkSection, #withdrawForm {
+    #referLinkSection, #withdrawForm, #successMessage {
       display: none;
       margin-top: 20px;
     }
@@ -119,6 +119,7 @@
 
     <div id="withdrawForm">
       <h3>Withdraw Request</h3>
+      <p style="color: #d35400; font-weight: bold;">Minimum Withdraw Amount: ৳100</p>
       <select id="method">
         <option value="Bkash">Bkash</option>
         <option value="Nagad">Nagad</option>
@@ -127,20 +128,21 @@
       <input type="number" id="amount" placeholder="Amount (৳)" />
       <button class="btn" onclick="sendWithdrawRequest()">Submit</button>
     </div>
+
+    <div id="successMessage" style="background-color: #e8f5e9; padding: 15px; border-left: 5px solid #4CAF50; border-radius: 5px;">
+      <strong>Withdraw Request Successful!</strong><br> আপনার উইথড্র রিকোয়েস্ট সফলভাবে গ্রহণ করা হয়েছে।
+    </div>
   </div>
 
   <script>
-    // Constants
     const ratePerMinute = 0.5;
     const ratePerReferral = 2;
     const minWithdraw = 100;
 
-    // Load saved data
     let balance = parseFloat(localStorage.getItem('balance')) || 0;
     let referrals = parseInt(localStorage.getItem('referrals')) || 0;
     let totalWithdraw = parseFloat(localStorage.getItem('totalWithdraw')) || 0;
 
-    // Update UI
     function updateUI() {
       document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
       document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
@@ -149,7 +151,6 @@
 
     updateUI();
 
-    // Handle referral from URL
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref');
     if (ref && !localStorage.getItem('referredBy')) {
@@ -161,31 +162,29 @@
       updateUI();
     }
 
-    // Generate or get referral code
     let referralCode = localStorage.getItem('referralCode');
     if (!referralCode) {
       referralCode = 'user' + Math.random().toString(36).substr(2, 9);
       localStorage.setItem('referralCode', referralCode);
     }
 
-    // Start Earn button
     document.getElementById('startEarnBtn').addEventListener('click', () => {
       window.open('https://www.profitableratecpm.com/h7qgvxieax?key=5eb9d14fd284744377da3ced29ad1e63', '_blank');
-      setInterval(() => {
-        balance += ratePerMinute;
-        localStorage.setItem('balance', balance);
-        updateUI();
-      }, 60000);
+      if (!window.earningInterval) {
+        window.earningInterval = setInterval(() => {
+          balance += ratePerMinute;
+          localStorage.setItem('balance', balance);
+          updateUI();
+        }, 60000);
+      }
     });
 
-    // Refer Earn button
     document.getElementById('referEarnBtn').addEventListener('click', () => {
       const link = `https://t.me/hkjob2025_bot?ref=${referralCode}`;
       document.getElementById('referLink').innerText = link;
       document.getElementById('referLinkSection').style.display = 'block';
     });
 
-    // Copy link
     function copyReferLink() {
       const referLink = document.getElementById('referLink').innerText;
       const tempInput = document.createElement('input');
@@ -197,9 +196,9 @@
       alert("রেফার লিংক কপি করা হয়েছে!");
     }
 
-    // Withdraw
     function showWithdrawForm() {
       document.getElementById('withdrawForm').style.display = 'block';
+      document.getElementById('successMessage').style.display = 'none';
     }
 
     function sendWithdrawRequest() {
@@ -222,8 +221,6 @@
         return;
       }
 
-      alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে (ডেমো)।");
-
       balance -= amount;
       totalWithdraw += amount;
 
@@ -234,6 +231,7 @@
       document.getElementById('number').value = '';
       document.getElementById('amount').value = '';
       document.getElementById('withdrawForm').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
     }
   </script>
 </body>
