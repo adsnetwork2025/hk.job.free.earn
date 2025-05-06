@@ -147,10 +147,14 @@
     document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
     document.getElementById('referrals').innerText = referrals;
 
-    const referralCode = 'user' + Math.random().toString(36).substr(2, 9);
+    let referralCode = localStorage.getItem('referralCode');
+    if (!referralCode) {
+      referralCode = 'user' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('referralCode', referralCode);
+    }
 
     document.getElementById('startEarnBtn').addEventListener('click', () => {
-      window.open('https://www.example.com', '_blank');
+      window.open('https://bd71cyberteam.blogspot.com/?m=1', '_blank');
       if (!startTime) startTime = Date.now();
       localStorage.setItem('startTime', startTime);
       earnInterval = setInterval(updateBalance, 60000);
@@ -203,8 +207,8 @@
 
       const message = `নতুন উইথড্র রিকোয়েস্ট:\nমেথড: ${method}\nনম্বর: ${number}\nপরিমাণ: ৳${amount}`;
 
-      const botToken = "7943334859:AAH6lPOovQpEwhJX7lBTB7ed1uw-RwiCs48";
-      const chatId = "6593402184";
+      const botToken = "YOUR_BOT_TOKEN_HERE";
+      const chatId = "YOUR_CHAT_ID_HERE";
 
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
