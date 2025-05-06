@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HK JOB FREE</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .info-box {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .info-box div {
+      width: 30%;
+      background: #e7f3e7;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+    }
+
+    #referLinkSection, #withdrawForm {
+      display: none;
+      margin-top: 20px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .copy-btn {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #008CBA;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .copy-btn:hover {
+      background-color: #007B9D;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">HK JOB FREE</div>
+
+    <div class="info-box">
+      <div>
+        <h3>Balance</h3>
+        <p id="balance">৳ 0.00</p>
+      </div>
+      <div>
+        <h3>Total Withdraw</h3>
+        <p id="totalWithdraw">৳ 0.00</p>
+      </div>
+      <div>
+        <h3>Referrals</h3>
+        <p id="referrals">0</p>
+      </div>
+    </div>
+
+    <button class="btn" id="startEarnBtn">Start Earn</button>
+    <button class="btn" id="referEarnBtn">Refer Earn</button>
+    <button class="btn" onclick="showWithdrawForm()">Withdraw</button>
+
+    <div id="referLinkSection">
+      <h3>Your Referral Link</h3>
+      <p id="referLink" style="word-wrap: break-word;"></p>
+      <button class="copy-btn" onclick="copyReferLink()">Copy Link</button>
+      <button class="btn" onclick="simulateReferral()">Simulate Referral</button>
+    </div>
+
+    <div id="withdrawForm">
+      <h3>Withdraw Request</h3>
+      <select id="method">
+        <option value="Bkash">Bkash</option>
+        <option value="Nagad">Nagad</option>
+      </select>
+      <input type="text" id="number" placeholder="01XXXXXXXXX" />
+      <input type="number" id="amount" placeholder="Amount (৳)" />
+      <button class="btn" onclick="sendWithdrawRequest()">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    // Fixed settings
+    const ratePerMinute = 0.5;
+    const ratePerReferral = 2;
+    const minWithdraw = 50;
+
+    // Load data from localStorage if available
+    let balance = parseFloat(localStorage.getItem('balance')) || 0;
+    let referrals = parseInt(localStorage.getItem('referrals')) || 0;
+    let totalWithdraw = parseFloat(localStorage.getItem('totalWithdraw')) || 0;
+    let startTime = parseInt(localStorage.getItem('startTime')) || 0;
+
+    // Update UI with stored values
+    document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
+    document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
+    document.getElementById('referrals').innerText = referrals;
+
+    const referralCode = 'user' + Math.random().toString(36).substr(2, 9);
+
+    document.getElementById('startEarnBtn').addEventListener('click', () => {
+      window.open('https://www.example.com', '_blank');
+      if (!startTime) startTime = Date.now();
+      localStorage.setItem('startTime', startTime);
+      earnInterval = setInterval(updateBalance, 60000);
+    });
+
+    function updateBalance() {
+      balance += ratePerMinute;
+      localStorage.setItem('balance', balance);
+      document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
+    }
+
+    document.getElementById('referEarnBtn').addEventListener('click', () => {
+      const link = `https://yourwebsite.com/?ref=${referralCode}`;
+      document.getElementById('referLink').innerText = link;
+      document.getElementById('referLinkSection').style.display = 'block';
+    });
+
+    function simulateReferral() {
+      referrals += 1;
+      balance += ratePerReferral;
+      localStorage.setItem('referrals', referrals);
+      localStorage.setItem('balance', balance);
+      document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
+      document.getElementById('referrals').innerText = referrals;
+    }
+
+    function showWithdrawForm() {
+      document.getElementById('withdrawForm').style.display = 'block';
+    }
+
+    function sendWithdrawRequest() {
+      const method = document.getElementById('method').value;
+      const number = document.getElementById('number').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+
+      if (!number || !amount) {
+        alert('সব তথ্য দিন।');
+        return;
+      }
+
+      if (amount < minWithdraw) {
+        alert(`মিনিমাম উইথড্র ৳${minWithdraw} হতে হবে।`);
+        return;
+      }
+
+      if (amount > balance) {
+        alert("আপনার ব্যালেন্সে পর্যাপ্ত টাকা নেই।");
+        return;
+      }
+
+      const message = `নতুন উইথড্র রিকোয়েস্ট:\nমেথড: ${method}\nনম্বর: ${number}\nপরিমাণ: ৳${amount}`;
+
+      const botToken = "7943334859:AAH6lPOovQpEwhJX7lBTB7ed1uw-RwiCs48";
+      const chatId = "6593402184";
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
+        balance -= amount;
+        totalWithdraw += amount;
+        localStorage.setItem('balance', balance);
+        localStorage.setItem('totalWithdraw', totalWithdraw);
+        document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
+        document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
+        document.getElementById('withdrawForm').reset();
+        document.getElementById('withdrawForm').style.display = 'none';
+      })
+      .catch(err => {
+        console.error(err);
+        alert("ত্রুটি হয়েছে, আবার চেষ্টা করুন।");
+      });
+    }
+
+    function copyReferLink() {
+      const referLink = document.getElementById('referLink').innerText;
+      const tempInput = document.createElement('input');
+      tempInput.value = referLink;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alert("রেফার লিংক কপি করা হয়েছে!");
+    }
+  </script>
+</body>
+</html>
