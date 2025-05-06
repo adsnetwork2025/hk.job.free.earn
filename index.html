@@ -4,235 +4,275 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HK JOB FREE</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
     }
 
     .container {
-      width: 90%;
-      max-width: 600px;
-      margin: 30px auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin: 40px auto;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
-    .header {
+    h3 {
+      font-size: 32px;
       text-align: center;
-      font-size: 24px;
+      margin-bottom: 30px;
       font-weight: bold;
-      margin-bottom: 20px;
     }
 
     .info-box {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      justify-content: space-around;
+      margin-bottom: 30px;
     }
 
     .info-box div {
-      width: 30%;
-      background: #e7f3e7;
-      padding: 10px;
-      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      padding: 15px;
+      border-radius: 10px;
       text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      width: 30%;
     }
 
-    .btn {
-      width: 100%;
-      padding: 12px;
-      background-color: #4CAF50;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      background-color: #45a049;
-    }
-
-    #referLinkSection, #withdrawForm, #successMessage {
-      display: none;
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
       margin-top: 20px;
     }
 
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+    .btn {
+      width: 48%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
     }
 
     .copy-btn {
-      margin-top: 10px;
-      padding: 10px;
-      background-color: #008CBA;
+      background-color: #ff6347;
       color: white;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      padding: 12px;
+      border-radius: 10px;
       width: 100%;
+      font-weight: bold;
     }
 
     .copy-btn:hover {
-      background-color: #007B9D;
+      background-color: #e04f33;
+    }
+
+    .form-control, .form-select {
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .modal-header {
+      background-color: #28a745;
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .modal-footer button {
+      background-color: #007bff;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">HK JOB FREE</div>
+    <h3>HK JOB FREE</h3>
 
     <div class="info-box">
       <div>
-        <h3>Balance</h3>
+        <h5>Balance</h5>
         <p id="balance">৳ 0.00</p>
       </div>
       <div>
-        <h3>Total Withdraw</h3>
+        <h5>Total Withdraw</h5>
         <p id="totalWithdraw">৳ 0.00</p>
       </div>
       <div>
-        <h3>Referrals</h3>
+        <h5>Referrals</h5>
         <p id="referrals">0</p>
       </div>
     </div>
 
-    <button class="btn" id="startEarnBtn">Start Earn</button>
-    <button class="btn" id="referEarnBtn">Refer Earn</button>
-    <button class="btn" onclick="showWithdrawForm()">Withdraw</button>
+    <div class="btn-container">
+      <button class="btn btn-success" id="startEarnBtn">Start Earn</button>
+      <button class="btn btn-primary" id="referEarnBtn">Refer Earn</button>
+      <button class="btn btn-warning" id="withdrawBtn">Withdraw</button>
+    </div>
 
-    <div id="referLinkSection">
-      <h3>Your Referral Link</h3>
+    <div id="referLinkSection" style="display: none; margin-top: 20px;">
+      <h5>Your Referral Link</h5>
       <p id="referLink" style="word-wrap: break-word;"></p>
       <button class="copy-btn" onclick="copyReferLink()">Copy Link</button>
     </div>
 
-    <div id="withdrawForm">
-      <h3>Withdraw Request</h3>
-      <p style="color: #d35400; font-weight: bold;">Minimum Withdraw Amount: ৳100</p>
-      <select id="method">
+    <div id="withdrawForm" style="display: none; margin-top: 20px;">
+      <h5>Withdraw Request</h5>
+      <p><strong>Minimum Withdraw:</strong> ৳100</p>
+      <select id="method" class="form-select">
         <option value="Bkash">Bkash</option>
         <option value="Nagad">Nagad</option>
       </select>
-      <input type="text" id="number" placeholder="01XXXXXXXXX" />
-      <input type="number" id="amount" placeholder="Amount (৳)" />
-      <button class="btn" onclick="sendWithdrawRequest()">Submit</button>
-    </div>
-
-    <div id="successMessage" style="background-color: #e8f5e9; padding: 15px; border-left: 5px solid #4CAF50; border-radius: 5px;">
-      <strong>Withdraw Request Successful!</strong><br> আপনার উইথড্র রিকোয়েস্ট সফলভাবে গ্রহণ করা হয়েছে।
+      <input type="text" id="number" class="form-control" placeholder="01XXXXXXXXX" />
+      <input type="number" id="amount" class="form-control" placeholder="Amount (৳)" />
+      <button class="btn btn-warning mt-3" onclick="sendWithdrawRequest()">Submit</button>
     </div>
   </div>
 
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content text-center">
+        <div class="modal-header">
+          <h5 class="modal-title w-100" id="successModalLabel">Withdraw Successful</h5>
+        </div>
+        <div class="modal-body">
+          <p>আপনার উইথড্র রিকোয়েস্ট সফলভাবে গ্রহণ করা হয়েছে!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (required for modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    const ratePerMinute = 0.5;
-    const ratePerReferral = 2;
-    const minWithdraw = 100;
+    document.addEventListener("DOMContentLoaded", function() {
+      const ratePerMinute = 0.5;
+      const ratePerReferral = 2;
+      const minWithdraw = 100;
 
-    let balance = parseFloat(localStorage.getItem('balance')) || 0;
-    let referrals = parseInt(localStorage.getItem('referrals')) || 0;
-    let totalWithdraw = parseFloat(localStorage.getItem('totalWithdraw')) || 0;
+      let balance = parseFloat(localStorage.getItem('balance')) || 0;
+      let referrals = parseInt(localStorage.getItem('referrals')) || 0;
+      let totalWithdraw = parseFloat(localStorage.getItem('totalWithdraw')) || 0;
 
-    function updateUI() {
-      document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
-      document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
-      document.getElementById('referrals').innerText = referrals;
-    }
-
-    updateUI();
-
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get('ref');
-    if (ref && !localStorage.getItem('referredBy')) {
-      localStorage.setItem('referredBy', ref);
-      balance += ratePerReferral;
-      localStorage.setItem('balance', balance);
-      referrals++;
-      localStorage.setItem('referrals', referrals);
-      updateUI();
-    }
-
-    let referralCode = localStorage.getItem('referralCode');
-    if (!referralCode) {
-      referralCode = 'user' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('referralCode', referralCode);
-    }
-
-    document.getElementById('startEarnBtn').addEventListener('click', () => {
-      window.open('https://www.profitableratecpm.com/h7qgvxieax?key=5eb9d14fd284744377da3ced29ad1e63', '_blank');
-      if (!window.earningInterval) {
-        window.earningInterval = setInterval(() => {
-          balance += ratePerMinute;
-          localStorage.setItem('balance', balance);
-          updateUI();
-        }, 60000);
-      }
-    });
-
-    document.getElementById('referEarnBtn').addEventListener('click', () => {
-      const link = `https://t.me/hkjob2025_bot?ref=${referralCode}`;
-      document.getElementById('referLink').innerText = link;
-      document.getElementById('referLinkSection').style.display = 'block';
-    });
-
-    function copyReferLink() {
-      const referLink = document.getElementById('referLink').innerText;
-      const tempInput = document.createElement('input');
-      tempInput.value = referLink;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-      alert("রেফার লিংক কপি করা হয়েছে!");
-    }
-
-    function showWithdrawForm() {
-      document.getElementById('withdrawForm').style.display = 'block';
-      document.getElementById('successMessage').style.display = 'none';
-    }
-
-    function sendWithdrawRequest() {
-      const method = document.getElementById('method').value;
-      const number = document.getElementById('number').value.trim();
-      const amount = parseFloat(document.getElementById('amount').value);
-
-      if (!number || !amount) {
-        alert('সব তথ্য দিন।');
-        return;
+      // Function to update UI
+      function updateUI() {
+        document.getElementById('balance').innerText = `৳ ${balance.toFixed(2)}`;
+        document.getElementById('totalWithdraw').innerText = `৳ ${totalWithdraw.toFixed(2)}`;
+        document.getElementById('referrals').innerText = referrals;
       }
 
-      if (amount < minWithdraw) {
-        alert(`মিনিমাম উইথড্র ৳${minWithdraw} হতে হবে।`);
-        return;
-      }
-
-      if (amount > balance) {
-        alert("আপনার ব্যালেন্সে পর্যাপ্ত টাকা নেই।");
-        return;
-      }
-
-      balance -= amount;
-      totalWithdraw += amount;
-
-      localStorage.setItem('balance', balance);
-      localStorage.setItem('totalWithdraw', totalWithdraw);
       updateUI();
 
-      document.getElementById('number').value = '';
-      document.getElementById('amount').value = '';
-      document.getElementById('withdrawForm').style.display = 'none';
-      document.getElementById('successMessage').style.display = 'block';
-    }
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref && !localStorage.getItem('referredBy')) {
+        localStorage.setItem('referredBy', ref);
+        balance += ratePerReferral;
+        referrals++;
+        localStorage.setItem('balance', balance);
+        localStorage.setItem('referrals', referrals);
+        updateUI();
+      }
+
+      let referralCode = localStorage.getItem('referralCode');
+      if (!referralCode) {
+        referralCode = 'user' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('referralCode', referralCode);
+      }
+
+      document.getElementById('startEarnBtn').addEventListener('click', function() {
+        console.log("Start Earn Button Clicked");
+        window.open('https://www.profitableratecpm.com/h7qgvxieax?key=5eb9d14fd284744377da3ced29ad1e63', '_blank');
+        if (!window.earningStarted) {
+          window.earningStarted = true;
+          setInterval(() => {
+            balance += ratePerMinute;
+            localStorage.setItem('balance', balance);
+            updateUI();
+          }, 60000);
+        }
+      });
+
+      document.getElementById('referEarnBtn').addEventListener('click', function() {
+        const link = `https://t.me/hkjob2025_bot?ref=${referralCode}`;
+        document.getElementById('referLink').innerText = link;
+        document.getElementById('referLinkSection').style.display = 'block';
+      });
+
+      function copyReferLink() {
+        const referLink = document.getElementById('referLink').innerText;
+        navigator.clipboard.writeText(referLink).then(() => {
+          alert("রেফার লিংক কপি করা হয়েছে!");
+        });
+      }
+
+      document.getElementById('withdrawBtn').addEventListener('click', function() {
+        document.getElementById('withdrawForm').style.display = 'block';
+      });
+
+      function sendWithdrawRequest() {
+        const method = document.getElementById('method').value;
+        const number = document.getElementById('number').value.trim();
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        if (!number || !amount) {
+          alert('সব তথ্য দিন।');
+          return;
+        }
+
+        if (amount < minWithdraw) {
+          alert(`মিনিমাম উইথড্র ৳${minWithdraw} হতে হবে।`);
+          return;
+        }
+
+        if (amount > balance) {
+          alert("আপনার ব্যালেন্সে পর্যাপ্ত টাকা নেই।");
+          return;
+        }
+
+        balance -= amount;
+        totalWithdraw += amount;
+        localStorage.setItem('balance', balance);
+        localStorage.setItem('totalWithdraw', totalWithdraw);
+        updateUI();
+
+        document.getElementById('number').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('withdrawForm').style.display = 'none';
+
+        const modal = new bootstrap.Modal(document.getElementById('successModal'));
+        modal.show();
+      }
+    });
   </script>
 </body>
 </html>
